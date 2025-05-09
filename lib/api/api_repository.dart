@@ -27,4 +27,15 @@ class ApiRepository {
     }
     return null;
   }
+
+  // Future<List<ServicesModel>> getServicesApi() async {
+  //   final res = await apiProvider.getMethod(ApiConstants.servicesApi);
+
+  //   if (res.statusCode == 200) {
+  //     return (res.body["data"]["list"] as List)
+  //         .map((tagJson) => ServicesModel.fromJson(tagJson))
+  //         .toList();
+  //   }
+  //   return [];
+  // }
 }
