@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_getx_boilerplate_code/models/todo_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
@@ -42,104 +43,60 @@ class DatabaseHelper {
   Future _onCreateDB(Database db, int version) async {
     //create tables
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.callLogTable}(
-        phoneAccountId TEXT ,
-        number TEXT ,
+      CREATE TABLE IF NOT EXISTS ${LocalDBTables.todo}(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT ,
-        duration TEXT,
-        islive INT,
+        age TEXT ,
+        address TEXT,
         timestamp TEXT PRIMARY KEY
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.searchTable}(
-        id TEXT,
-        displayName TEXT ,
-        number TEXT,
-        userType TEXT ,
-        conType TEXT,
-        isFavorite INT,
-        timestamp TEXT PRIMARY KEY
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.spamMessageTable}(
-        id TEXT,
-        displayName TEXT ,
-        number TEXT,
-        userType TEXT ,
-        message TEXT,
-        timestamp TEXT PRIMARY KEY
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.spamCallTable}(
-        phoneAccountId TEXT,
-        name TEXT ,
-        number TEXT,
-        userType TEXT,
-        duration INT,
-        timestamp TEXT PRIMARY KEY  
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.verifiedNameTable}(
-        id INTEGER PRIMARY KEY,
-        name TEXT ,
-        number TEXT
-      )
-      ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${LocalDBTables.notificationTable}(
-        id INTEGER PRIMARY KEY,
-        title TEXT ,
-        body TEXT ,
-        url TEXT , 
-        route TEXT ,
-        timestamp TEXT
       )
       ''');
   }
 
-  // Future<int> insertCallLogs(CallLogModel calllog) async {
-  //   Database db = await database;
-  //   var ss = 0;
-  //   try {
-  //     // ss = await db.insert("callLogTable", calllog.toJson());
-  //     ss = await db.insert(LocalDBTables.callLogTable, calllog.toJson());
-  //     // print(ss);
-  //   } on DatabaseException catch (e) {
-  //     print("e------$e");
-  //   } on Exception catch (e) {
-  //     // ignore: todo
-  //     // TODO
-  //     print("e------$e");
-  //   }
-  //   return ss;
-  // }
+  Future<int> insertCallLogs(TodoModel todo) async {
+    Database db = await database;
+    var ss = 0;
+    try {
+      ss = await db.insert(LocalDBTables.todo, todo.tJson());
+    } on DatabaseException catch (e) {
+      print("e------$e");
+    } on Exception catch (e) {
+      print("e------$e");
+    }
+    return ss;
+  }
 
-  // Future<int> deleteNotification(int id) async {
-  //   Database db = await database;
-  //   return await db
-  //       .delete(LocalDBTables.callLogTable, where: 'id=?', whereArgs: [id]);
-  // }
+  Future<int> deleteTodo(int id) async {
+    Database db = await database;
+    return await db.delete(LocalDBTables.todo, where: 'id=?', whereArgs: [id]);
+  }
 
-  //contact - retrieve all
-  // Future<List<CallLogModel>> fetchCallLogs() async {
-  //   Database db = await database;
-  //   // List<Map> notification = await db.query("notificationTable");
-  //   List<Map> callLog = await db.query(LocalDBTables.callLogTable, columns: [
-  //     'phoneAccountId',
-  //     'number',
-  //     'name',
-  //     'duration',
-  //     'timestamp',
-  //     // "datetime(dateTime,'localtime') as dateTime"
-  //   ]);
-  //   return callLog.isEmpty
-  //       ? []
-  //       : callLog.map((x) => CallLogModel.fromJson(x)).toList();
-  // }
+  Future<List<TodoModel>> fetchCallLogs() async {
+    Database db = await database;
+    // List<Map> notification = await db.query("notificationTable");
+    List<Map<String, dynamic>> todos = await db.query(
+      LocalDBTables.todo,
+      columns: [
+        'id',
+        'name',
+        'age',
+        'address',
+        'timestamp',
+        // "datetime(dateTime,'localtime') as dateTime"
+      ],
+    );
+    return todos.isEmpty
+        ? []
+        : todos.map((x) => TodoModel.fromJson(x)).toList();
+  }
 
-  //searchTable
+  Future<int> updateTodo(TodoModel todo) async {
+    Database db = await database;
+    return await db.update(
+      LocalDBTables.todo,
+      todo.tJson(),
+      where: 'id=?',
+      whereArgs: [todo.id],
+    );
+  }
 }
