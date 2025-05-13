@@ -5,6 +5,6 @@ class HomeBindings extends Bindings {
   @override
   void dependencies() {
     // Add your dependencies here
-    Get.put(HomeController());
+    Get.put(HomeController(apiRepository: Get.find()));
   }
 }

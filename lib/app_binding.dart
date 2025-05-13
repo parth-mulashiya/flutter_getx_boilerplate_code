@@ -6,6 +6,7 @@ import 'api/api_repository.dart';
 class AppBinding extends Bindings {
   @override
   void dependencies() async {
+    Get.put<GetConnect>(GetConnect());
     Get.put(ApiProvider(), permanent: true);
     Get.put(ApiRepository(apiProvider: Get.find()), permanent: true);
   }
